@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.account import Account
@@ -44,3 +44,9 @@ async def update_account(
     account.balance = data["balance"]
     await session.commit()
     return account
+
+
+async def delete_account_by_id(id: int, session: AsyncSession):
+    stmt = delete(Account).where(Account.id == id)
+    await session.execute(stmt)
+    await session.commit()
