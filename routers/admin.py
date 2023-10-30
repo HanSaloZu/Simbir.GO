@@ -4,14 +4,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from models.account import Account
 from schemas.account import AccountAdminCreateUpdate, AccountBase
+from schemas.transport import ExtendedTransportType, TransportBaseCreate
 from services.account import (create_account, delete_account_by_id,
                               get_account_by_id, get_account_by_username,
                               get_accounts_list, update_account)
+from services.transport import get_transports_list
 from utils.auth import get_current_admin_account
 from utils.exception import user_not_found_exception
 from utils.response import nonunique_username_response
 
 account_router = APIRouter()
+transport_router = APIRouter()
 
 
 @account_router.get(
@@ -99,3 +102,18 @@ async def delete_account(
         await delete_account_by_id(id, session)
     else:
         raise user_not_found_exception
+
+
+@transport_router.get(
+    "/",
+    response_model=list[TransportBaseCreate],
+    description="Получение списка всех транспортных средств",
+)
+async def list_accounts(
+    start: int = 0,
+    count: int = 10,
+    transportType: ExtendedTransportType = ExtendedTransportType.all,
+    account: Account = Depends(get_current_admin_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    return await get_transports_list(start, count, transportType, session)

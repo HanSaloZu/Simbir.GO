@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from database import Base, engine
 from routers.account import router as AccountRouter
 from routers.admin import account_router as AdminAccountRouter
+from routers.admin import transport_router as AdminTransportRouter
 from routers.payment import router as PaymentRouter
 from routers.transport import router as TransportRouter
 
@@ -65,6 +66,12 @@ app.include_router(
     AdminAccountRouter,
     tags=["AdminAccountController"],
     prefix="/api/Admin/Account",
+)
+
+app.include_router(
+    AdminTransportRouter,
+    tags=["AdminTransportController"],
+    prefix="/api/Admin/Transport",
 )
 
 if __name__ == "__main__":
