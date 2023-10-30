@@ -20,3 +20,14 @@ async def get_account_by_username(username: str, session: AsyncSession):
     result = await session.execute(query)
     account = result.one_or_none()
     return None if account is None else account[0]
+
+
+async def create_account(
+    data,
+    session: AsyncSession,
+) -> Account:
+    data["hashed_password"] = get_password_hash(data.pop("password"))
+    account = Account(**data)
+    session.add(account)
+    await session.commit()
+    return account
