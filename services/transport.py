@@ -35,6 +35,7 @@ async def update_transport(
     transport.longitude = data["longitude"]
     transport.minute_price = data["minute_price"]
     transport.day_price = data["day_price"]
+    transport.owner_id = data["owner_id"]
     await session.commit()
     return transport
 
