@@ -63,3 +63,19 @@ async def get_transports_list(
         )
     result = await session.execute(query)
     return [account[0] for account in result.all()]
+
+
+async def get_transports_available_for_rent(
+    lat: float, long: float, radius: float, type: str, session: AsyncSession
+):
+    query = select(Transport).where(
+        Transport.can_be_rented == True,
+        Transport.latitude > (lat - radius),
+        Transport.latitude < (lat + radius),
+        Transport.longitude > (long - radius),
+        Transport.longitude < (long + radius),
+    )
+    if type != "All":
+        query = query.where(Transport.transport_type == type)
+    result = await session.execute(query)
+    return [transport[0] for transport in result.all()]
