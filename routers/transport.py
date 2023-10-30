@@ -3,10 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
 from models.account import Account
-from schemas.transport import TransportBaseCreate
-from services.transport import create_transport, get_transport_by_id
+from schemas.transport import TransportBaseCreate, TransportUpdate
+from services.transport import (create_transport, get_transport_by_id,
+                                update_transport)
 from utils.auth import get_current_account
-from utils.exception import transport_not_found_exception
+from utils.exception import (access_denied_exception,
+                             transport_not_found_exception)
 
 router = APIRouter()
 
@@ -39,3 +41,27 @@ async def create(
     return await create_transport(
         {**data.model_dump(), "owner_id": account.id}, session
     )
+
+
+@router.put(
+    "/{id}",
+    response_model=TransportBaseCreate,
+    description="Изменение транспорта оп id",
+)
+async def update(
+    id: int,
+    data: TransportUpdate,
+    account: Account = Depends(get_current_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    transport = await get_transport_by_id(id, session)
+    if transport:
+        if transport.owner_id == account.id:
+            return await update_transport(
+                {**data.model_dump()},
+                transport,
+                session,
+            )
+        else:
+            raise access_denied_exception
+    raise transport_not_found_exception
