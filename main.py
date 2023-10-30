@@ -7,6 +7,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from database import Base, engine
+from routers.account import router as AccountRouter
 
 
 @asynccontextmanager
@@ -38,6 +39,12 @@ async def validation_exception_handler(request, exc):
         content=jsonable_encoder(errors),
     )
 
+
+app.include_router(
+    AccountRouter,
+    tags=["AccountController"],
+    prefix="/api/Account",
+)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
