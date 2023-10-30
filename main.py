@@ -1,10 +1,25 @@
+from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-app = FastAPI(debug=True, title="Simbir.GO API", docs_url="/ui-swagger")
+from database import Base, engine
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    yield
+
+
+app = FastAPI(
+    debug=True, lifespan=lifespan, title="Simbir.GO API", docs_url="/ui-swagger"
+)
 
 
 @app.exception_handler(RequestValidationError)
