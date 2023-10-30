@@ -11,6 +11,16 @@ async def get_transport_by_id(id: int, session: AsyncSession):
     return None if transport is None else transport[0]
 
 
+async def create_transport(
+    data,
+    session: AsyncSession,
+) -> Transport:
+    transport = Transport(**data)
+    session.add(transport)
+    await session.commit()
+    return transport
+
+
 async def update_transport(
     data,
     transport: Transport,
