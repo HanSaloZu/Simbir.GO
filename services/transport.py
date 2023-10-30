@@ -62,7 +62,7 @@ async def get_transports_list(
             .limit(count)
         )
     result = await session.execute(query)
-    return [account[0] for account in result.all()]
+    return [transport[0] for transport in result.all()]
 
 
 async def get_transports_available_for_rent(
