@@ -10,6 +10,7 @@ from database import Base, engine
 from routers.account import router as AccountRouter
 from routers.admin import account_router as AdminAccountRouter
 from routers.payment import router as PaymentRouter
+from routers.transport import router as TransportRouter
 
 
 @asynccontextmanager
@@ -46,6 +47,12 @@ app.include_router(
     AccountRouter,
     tags=["AccountController"],
     prefix="/api/Account",
+)
+
+app.include_router(
+    TransportRouter,
+    tags=["TransportController"],
+    prefix="/api/Transport",
 )
 
 app.include_router(
