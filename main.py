@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 
 from database import Base, engine
 from routers.account import router as AccountRouter
+from routers.admin import account_router as AdminAccountRouter
 
 
 @asynccontextmanager
@@ -44,6 +45,12 @@ app.include_router(
     AccountRouter,
     tags=["AccountController"],
     prefix="/api/Account",
+)
+
+app.include_router(
+    AdminAccountRouter,
+    tags=["AdminAccountController"],
+    prefix="/api/Admin/Account",
 )
 
 if __name__ == "__main__":
