@@ -11,6 +11,7 @@ from routers.account import router as AccountRouter
 from routers.admin import account_router as AdminAccountRouter
 from routers.admin import transport_router as AdminTransportRouter
 from routers.payment import router as PaymentRouter
+from routers.rent import router as RentRouter
 from routers.transport import router as TransportRouter
 
 
@@ -54,6 +55,12 @@ app.include_router(
     TransportRouter,
     tags=["TransportController"],
     prefix="/api/Transport",
+)
+
+app.include_router(
+    RentRouter,
+    tags=["RentController"],
+    prefix="/api/Rent",
 )
 
 app.include_router(
