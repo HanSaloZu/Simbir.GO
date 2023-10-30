@@ -39,3 +39,12 @@ class TransportBaseCreate(TransportUpdate):
         from_attributes = True
         populate_by_name = True
         use_enum_values = True
+
+
+class TransportAdminCreateUpdate(TransportBaseCreate):
+    owner_id: int = Field(alias="ownerId")
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+        use_enum_values = True
