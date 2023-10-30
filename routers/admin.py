@@ -10,7 +10,7 @@ from services.account import (create_account, delete_account_by_id,
                               get_account_by_id, get_account_by_username,
                               get_accounts_list, update_account)
 from services.transport import (create_transport, get_transport_by_id,
-                                get_transports_list)
+                                get_transports_list, update_transport)
 from utils.auth import get_current_admin_account
 from utils.exception import (transport_not_found_exception,
                              user_not_found_exception)
@@ -149,3 +149,24 @@ async def create_transport_by_admin(
     session: AsyncSession = Depends(get_async_session),
 ):
     return await create_transport({**data.model_dump()}, session)
+
+
+@transport_router.put(
+    "/{id}",
+    response_model=TransportBaseCreate,
+    description="Изменение транспортного средства по id",
+)
+async def update_transport_by_admin(
+    id: int,
+    data: TransportAdminCreateUpdate,
+    account: Account = Depends(get_current_admin_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    transport = await get_transport_by_id(id, session)
+    if transport:
+        return await update_transport(
+            {**data.model_dump()},
+            transport,
+            session,
+        )
+    raise transport_not_found_exception
