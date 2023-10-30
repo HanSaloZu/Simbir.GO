@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from database import Base, engine
 from routers.account import router as AccountRouter
 from routers.admin import account_router as AdminAccountRouter
+from routers.payment import router as PaymentRouter
 
 
 @asynccontextmanager
@@ -45,6 +46,12 @@ app.include_router(
     AccountRouter,
     tags=["AccountController"],
     prefix="/api/Account",
+)
+
+app.include_router(
+    PaymentRouter,
+    tags=["PaymentController"],
+    prefix="/api/Payment",
 )
 
 app.include_router(
