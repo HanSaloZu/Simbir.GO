@@ -50,3 +50,9 @@ async def delete_account_by_id(id: int, session: AsyncSession):
     stmt = delete(Account).where(Account.id == id)
     await session.execute(stmt)
     await session.commit()
+
+
+async def get_accounts_list(start: int, count: int, session: AsyncSession):
+    query = select(Account).offset(start).limit(count)
+    result = await session.execute(query)
+    return [account[0] for account in result.all()]
