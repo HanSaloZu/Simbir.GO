@@ -3,10 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
 from models.account import Account
-from schemas.account import AccountBase
-from services.account import get_account_by_id, get_accounts_list
+from schemas.account import AccountAdminCreateUpdate, AccountBase
+from services.account import (create_account, get_account_by_id,
+                              get_account_by_username, get_accounts_list)
 from utils.auth import get_current_admin_account
 from utils.exception import user_not_found_exception
+from utils.response import nonunique_username_response
 
 account_router = APIRouter()
 
@@ -39,3 +41,19 @@ async def get_account_info(
     if selected_account:
         return selected_account
     raise user_not_found_exception
+
+
+@account_router.post(
+    "/",
+    response_model=AccountBase,
+    description="Создание администратором нового аккаунта",
+)
+async def create_account_by_admin(
+    data: AccountAdminCreateUpdate,
+    account: Account = Depends(get_current_admin_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    new_account = await get_account_by_username(data.username, session)
+    if new_account:
+        return nonunique_username_response
+    return await create_account({**data.model_dump()}, session)
