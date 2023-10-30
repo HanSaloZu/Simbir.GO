@@ -31,3 +31,16 @@ async def create_account(
     session.add(account)
     await session.commit()
     return account
+
+
+async def update_account(
+    data,
+    account: Account,
+    session: AsyncSession,
+):
+    account.username = data["username"]
+    account.hashed_password = get_password_hash(data["password"])
+    account.is_admin = data["is_admin"]
+    account.balance = data["balance"]
+    await session.commit()
+    return account
