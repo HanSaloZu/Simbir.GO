@@ -5,7 +5,8 @@ from database import get_async_session
 from models.account import Account
 from schemas.account import AccountAdminCreateUpdate, AccountBase
 from services.account import (create_account, get_account_by_id,
-                              get_account_by_username, get_accounts_list)
+                              get_account_by_username, get_accounts_list,
+                              update_account)
 from utils.auth import get_current_admin_account
 from utils.exception import user_not_found_exception
 from utils.response import nonunique_username_response
@@ -57,3 +58,27 @@ async def create_account_by_admin(
     if new_account:
         return nonunique_username_response
     return await create_account({**data.model_dump()}, session)
+
+
+@account_router.put(
+    "/{id}",
+    response_model=AccountBase,
+    description="Изменение администратором аккаунта по id",
+)
+async def update_account_by_admin(
+    id: int,
+    data: AccountAdminCreateUpdate,
+    account: Account = Depends(get_current_admin_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    selected_account = await get_account_by_id(id, session)
+    if selected_account:
+        existing_account = await get_account_by_username(data.username, session)
+        if existing_account and selected_account.id != existing_account.id:
+            return nonunique_username_response
+        return await update_account(
+            {**data.model_dump()},
+            selected_account,
+            session,
+        )
+    raise user_not_found_exception
