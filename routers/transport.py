@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from models.account import Account
 from schemas.transport import TransportBaseCreate, TransportUpdate
-from services.transport import (create_transport, get_transport_by_id,
-                                update_transport)
+from services.transport import (create_transport, delete_transport_by_id,
+                                get_transport_by_id, update_transport)
 from utils.auth import get_current_account
 from utils.exception import (access_denied_exception,
                              transport_not_found_exception)
@@ -65,3 +65,23 @@ async def update(
         else:
             raise access_denied_exception
     raise transport_not_found_exception
+
+
+@router.delete(
+    "/{id}",
+    status_code=204,
+    description="Удаление транспорта по id",
+)
+async def delete(
+    id: int,
+    account: Account = Depends(get_current_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    transport = await get_transport_by_id(id, session)
+    if transport:
+        if transport.owner_id == account.id:
+            await delete_transport_by_id(id, session)
+        else:
+            raise access_denied_exception
+    else:
+        raise transport_not_found_exception
