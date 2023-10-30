@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +11,7 @@ from schemas.account import AccountBase, AccountCreateUpdate
 from schemas.token import TokenBase
 from services.account import (create_account, get_account_by_username,
                               verify_password)
-from services.token import create_token
+from services.token import create_token, delete_token_by_value
 from utils.auth import get_current_account
 from utils.response import nonunique_username_response
 
@@ -65,3 +65,13 @@ async def register(
     if account:
         return nonunique_username_response
     return await create_account({**data.model_dump()}, session)
+
+
+@router.post("/SignOut", status_code=204, description="Выход из аккаунта")
+async def logout(
+    request: Request,
+    account: Account = Depends(get_current_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    token_value = request.headers["authorization"].split(" ")[1]
+    await delete_token_by_value(token_value, session)
