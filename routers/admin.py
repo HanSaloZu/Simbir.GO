@@ -9,8 +9,9 @@ from schemas.transport import (ExtendedTransportType,
 from services.account import (create_account, delete_account_by_id,
                               get_account_by_id, get_account_by_username,
                               get_accounts_list, update_account)
-from services.transport import (create_transport, get_transport_by_id,
-                                get_transports_list, update_transport)
+from services.transport import (create_transport, delete_transport_by_id,
+                                get_transport_by_id, get_transports_list,
+                                update_transport)
 from utils.auth import get_current_admin_account
 from utils.exception import (transport_not_found_exception,
                              user_not_found_exception)
@@ -170,3 +171,20 @@ async def update_transport_by_admin(
             session,
         )
     raise transport_not_found_exception
+
+
+@transport_router.delete(
+    "/{id}",
+    status_code=204,
+    description="Удаление транспорта по id",
+)
+async def delete_transport(
+    id: int,
+    account: Account = Depends(get_current_admin_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    transport = await get_transport_by_id(id, session)
+    if transport:
+        await delete_transport_by_id(id, session)
+    else:
+        raise transport_not_found_exception
