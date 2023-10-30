@@ -41,3 +41,17 @@ async def get_current_account(
         )
 
     return account
+
+
+async def get_current_admin_account(
+    token: str = Depends(reuseable_oauth),
+    session: AsyncSession = Depends(get_async_session),
+) -> Account:
+    account = await get_current_account(token, session)
+    if account.is_admin:
+        return account
+
+    raise HTTPException(
+        status_code=403,
+        detail="You are not an administrator",
+    )
