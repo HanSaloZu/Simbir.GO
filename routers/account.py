@@ -53,7 +53,6 @@ async def login(
 
 @router.post(
     "/SignUp",
-    status_code=201,
     response_model=AccountBase,
     description="Регистрация нового аккаунта",
 )
