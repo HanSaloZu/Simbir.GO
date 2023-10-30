@@ -6,11 +6,25 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
+from models.account import Account
+from schemas.account import AccountBase
 from schemas.token import TokenBase
 from services.account import get_account_by_username, verify_password
 from services.token import create_token
+from utils.auth import get_current_account
 
 router = APIRouter()
+
+
+@router.get(
+    "/Me",
+    response_model=AccountBase,
+    description="Получение данных о текущем аккаунте",
+)
+async def get_authenticated_user(
+    account: Account = Depends(get_current_account),
+):
+    return account
 
 
 @router.post(
