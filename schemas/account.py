@@ -15,3 +15,8 @@ class AccountBase(AccountBalance):
     class Config:
         from_attributes = True
         populate_by_name = True
+
+
+class AccountCreateUpdate(BaseModel):
+    username: str = Field(min_length=1, max_length=250)
+    password: str = Field(min_length=1, max_length=250)
