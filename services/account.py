@@ -22,6 +22,13 @@ async def get_account_by_username(username: str, session: AsyncSession):
     return None if account is None else account[0]
 
 
+async def get_account_by_id(id: int, session: AsyncSession):
+    query = select(Account).where(Account.id == id)
+    result = await session.execute(query)
+    account = result.one_or_none()
+    return None if account is None else account[0]
+
+
 async def create_account(
     data,
     session: AsyncSession,
