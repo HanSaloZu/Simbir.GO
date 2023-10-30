@@ -9,6 +9,13 @@ class TransportType(str, Enum):
     scooter = "Scooter"
 
 
+class ExtendedTransportType(str, Enum):
+    car = "Car"
+    bike = "Bike"
+    scooter = "Scooter"
+    all = "All"
+
+
 class TransportUpdate(BaseModel):
     can_be_rented: bool = Field(alias="canBeRented")
     model: str
