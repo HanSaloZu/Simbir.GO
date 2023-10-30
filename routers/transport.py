@@ -58,7 +58,7 @@ async def update(
     if transport:
         if transport.owner_id == account.id:
             return await update_transport(
-                {**data.model_dump()},
+                {**data.model_dump(), "owner_id": account.id},
                 transport,
                 session,
             )
