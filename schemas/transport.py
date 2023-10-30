@@ -23,3 +23,12 @@ class TransportUpdate(BaseModel):
     class Config:
         from_attributes = True
         populate_by_name = True
+
+
+class TransportBaseCreate(TransportUpdate):
+    transport_type: TransportType = Field(alias="transportType")
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+        use_enum_values = True
