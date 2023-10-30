@@ -10,7 +10,7 @@ from models.account import Account
 from schemas.account import AccountBase, AccountCreateUpdate
 from schemas.token import TokenBase
 from services.account import (create_account, get_account_by_username,
-                              verify_password)
+                              update_account, verify_password)
 from services.token import create_token, delete_token_by_value
 from utils.auth import get_current_account
 from utils.response import nonunique_username_response
@@ -75,3 +75,27 @@ async def logout(
 ):
     token_value = request.headers["authorization"].split(" ")[1]
     await delete_token_by_value(token_value, session)
+
+
+@router.put(
+    "/Update",
+    response_model=AccountBase,
+    description="Обновление своего аккаунта",
+)
+async def update_authenticated_user(
+    data: AccountCreateUpdate,
+    account: Account = Depends(get_current_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    existing_account = await get_account_by_username(data.username, session)
+    if existing_account and account.id != existing_account.id:
+        return nonunique_username_response
+    return await update_account(
+        {
+            **data.model_dump(),
+            "is_admin": account.is_admin,
+            "balance": account.balance,
+        },
+        account,
+        session,
+    )
