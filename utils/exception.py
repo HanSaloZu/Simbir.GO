@@ -9,3 +9,8 @@ access_denied_exception = HTTPException(
     status_code=403,
     detail="Access denied",
 )
+
+transport_not_found_exception = HTTPException(
+    status_code=404,
+    detail="Transport not found",
+)
