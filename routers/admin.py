@@ -4,9 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from models.account import Account
 from schemas.account import AccountAdminCreateUpdate, AccountBase
-from services.account import (create_account, get_account_by_id,
-                              get_account_by_username, get_accounts_list,
-                              update_account)
+from services.account import (create_account, delete_account_by_id,
+                              get_account_by_id, get_account_by_username,
+                              get_accounts_list, update_account)
 from utils.auth import get_current_admin_account
 from utils.exception import user_not_found_exception
 from utils.response import nonunique_username_response
@@ -82,3 +82,20 @@ async def update_account_by_admin(
             session,
         )
     raise user_not_found_exception
+
+
+@account_router.delete(
+    "/{id}",
+    status_code=204,
+    description="Удаление аккаунта по id",
+)
+async def delete_account(
+    id: int,
+    account: Account = Depends(get_current_admin_account),
+    session: AsyncSession = Depends(get_async_session),
+):
+    selected_account = await get_account_by_id(id, session)
+    if selected_account:
+        await delete_account_by_id(id, session)
+    else:
+        raise user_not_found_exception
