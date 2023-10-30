@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from jose import jwt
+from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import JWT_ALGORITHM, JWT_SECRET_KEY
@@ -18,3 +19,9 @@ async def create_token(account: Account, session: AsyncSession) -> Token:
     session.add(token)
     await session.commit()
     return token
+
+
+async def delete_token_by_value(value: str, session: AsyncSession):
+    stmt = delete(Token).where(Token.value == value)
+    await session.execute(stmt)
+    await session.commit()
