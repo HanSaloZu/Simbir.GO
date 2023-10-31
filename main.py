@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from database import Base, engine
+from database import sync_db
 from routers.account import router as AccountRouter
 from routers.admin import account_router as AdminAccountRouter
 from routers.admin import transport_router as AdminTransportRouter
@@ -17,9 +17,7 @@ from routers.transport import router as TransportRouter
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
+    await sync_db()
     yield
 
 
