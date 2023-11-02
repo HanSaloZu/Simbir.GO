@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
-from schemas.transport import ExtendedTransportType, TransportBaseCreate
+from schemas.transport import ExtendedTransportType, TransportBase
 from services.transport import get_transports_available_for_rent
 
 router = APIRouter()
@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.get(
     "/Transport",
-    response_model=list[TransportBaseCreate],
+    response_model=list[TransportBase],
     description="Получение транспорта доступного для аренды по параметрам",
 )
 async def get_transports_for_rent(

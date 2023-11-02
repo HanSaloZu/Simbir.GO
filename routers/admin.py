@@ -5,7 +5,7 @@ from database import get_async_session
 from models.account import Account
 from schemas.account import AccountAdminCreateUpdate, AccountBase
 from schemas.transport import (ExtendedTransportType,
-                               TransportAdminCreateUpdate, TransportBaseCreate)
+                               TransportAdminCreateUpdate, TransportBase)
 from services.account import (create_account, delete_account_by_id,
                               get_account_by_id, get_account_by_username,
                               get_accounts_list, update_account)
@@ -110,7 +110,7 @@ async def delete_account(
 
 @transport_router.get(
     "/",
-    response_model=list[TransportBaseCreate],
+    response_model=list[TransportBase],
     description="Получение списка всех транспортных средств",
 )
 async def list_transports(
@@ -125,7 +125,7 @@ async def list_transports(
 
 @transport_router.get(
     "/{id}",
-    response_model=TransportBaseCreate,
+    response_model=TransportBase,
     description="Получение информации о транспортном средстве по id",
 )
 async def get_transport_info(
@@ -141,7 +141,7 @@ async def get_transport_info(
 
 @transport_router.post(
     "/",
-    response_model=TransportBaseCreate,
+    response_model=TransportBase,
     description="Создание нового транспортного средства",
 )
 async def create_transport_by_admin(
@@ -154,7 +154,7 @@ async def create_transport_by_admin(
 
 @transport_router.put(
     "/{id}",
-    response_model=TransportBaseCreate,
+    response_model=TransportBase,
     description="Изменение транспортного средства по id",
 )
 async def update_transport_by_admin(

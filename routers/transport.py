@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
 from models.account import Account
-from schemas.transport import TransportBaseCreate, TransportUpdate
+from schemas.transport import TransportBase, TransportCreate, TransportUpdate
 from services.transport import (create_transport, delete_transport_by_id,
                                 get_transport_by_id, update_transport)
 from utils.auth import get_current_account
@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.get(
     "/{id}",
-    response_model=TransportBaseCreate,
+    response_model=TransportBase,
     description="Получение информации о транспорте по id",
 )
 async def get_transport_info(
@@ -30,11 +30,11 @@ async def get_transport_info(
 
 @router.post(
     "/",
-    response_model=TransportBaseCreate,
+    response_model=TransportBase,
     description="Добавление нового транспорта",
 )
 async def create(
-    data: TransportBaseCreate,
+    data: TransportCreate,
     account: Account = Depends(get_current_account),
     session: AsyncSession = Depends(get_async_session),
 ):
@@ -45,7 +45,7 @@ async def create(
 
 @router.put(
     "/{id}",
-    response_model=TransportBaseCreate,
+    response_model=TransportBase,
     description="Изменение транспорта оп id",
 )
 async def update(

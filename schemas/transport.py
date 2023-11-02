@@ -32,7 +32,7 @@ class TransportUpdate(BaseModel):
         populate_by_name = True
 
 
-class TransportBaseCreate(TransportUpdate):
+class TransportCreate(TransportUpdate):
     transport_type: TransportType = Field(alias="transportType")
 
     class Config:
@@ -41,7 +41,11 @@ class TransportBaseCreate(TransportUpdate):
         use_enum_values = True
 
 
-class TransportAdminCreateUpdate(TransportBaseCreate):
+class TransportBase(TransportCreate):
+    id: int
+
+
+class TransportAdminCreateUpdate(TransportCreate):
     owner_id: int = Field(alias="ownerId")
 
     class Config:
