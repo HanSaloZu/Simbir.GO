@@ -14,6 +14,13 @@ async def create_rent(
     return rent
 
 
+async def get_rent_by_id(id: int, session: AsyncSession):
+    query = select(Rent).where(Rent.id == id)
+    result = await session.execute(query)
+    rent = result.one_or_none()
+    return None if rent is None else rent[0]
+
+
 async def is_transport_in_rent(
     transport_id: int,
     session: AsyncSession,
