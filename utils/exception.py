@@ -14,3 +14,8 @@ transport_not_found_exception = HTTPException(
     status_code=404,
     detail="Transport not found",
 )
+
+rent_not_found_exception = HTTPException(
+    status_code=404,
+    detail="Rent not found",
+)
